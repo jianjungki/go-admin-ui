@@ -28,17 +28,17 @@
         >
           <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
             <i class="el-icon-upload" />
-            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip">文件大小限制在200MB以内</div>
+            <div class="el-upload__text">将图片或PDF拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__tip">最大文件为30M</div>
           </div>
           <div v-if="!isUploaded && uploadPercentage > 0" class="progress-container">
-            <div class="el-upload__text">文件上传中...</div>
+            <div class="el-upload__text">文件处理中...</div>
             <el-progress :text-inside="true" :stroke-width="26" :percentage="uploadPercentage" />
           </div>
           <div v-if="isUploaded" class="upload-success">
             <i class="el-icon-check" />
-            <div class="el-upload__text">文件上传成功</div>
-            <el-button type="primary" style="font-size:20px" @click="downloadFile">下载文件</el-button>
+            <div class="el-upload__text">文件转换成功</div>
+            <el-button type="primary" style="font-size:20px" @click="downloadFile">下载转换后的文件</el-button>
           </div>
         </el-upload>
 
