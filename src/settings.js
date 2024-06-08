@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'go-admin后台管理系统',
+  title: '北京信天邮科技有限公司',
 
   /**
    * @type {boolean} true | false

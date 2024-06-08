@@ -155,7 +155,7 @@
 
         <div class="lh">
           <a class="text-color" href="https://beian.miit.gov.cn" target="_blank">
-            沪ICP备XXXXXXXXX号-1
+            京ICP备17060541号-1
           </a>
         </div>
         <div class="open-content-info">
@@ -168,7 +168,7 @@
                     href="https://beian.miit.gov.cn"
                     target="_blank"
                   >
-                    沪ICP备XXXXXXXXX号-1
+                    京ICP备17060541号-1
                   </a>
                 </div>
               </div>

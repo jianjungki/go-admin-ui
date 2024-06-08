@@ -3,7 +3,20 @@
     <BasicLayout>
       <template #wrapper>
         <el-row :gutter="10" class="mb10">
-          <el-col :sm="24" :md="6">
+          <el-card class="box-card" style="text-align:center">
+            <p style="font-size:32px">
+              图片转word
+            </p>
+            <div style="color:#787878">
+              <p>
+                高精度OCR识别
+              </p>
+              <p>适合手机拍照等任何质量的图片</p>
+            </div>
+          </el-card>
+        </el-row>
+        <el-row :gutter="10" class="mb10">
+          <el-col :sm="20" :md="6">
             <el-row :gutter="10" class="mb10">
               <el-card class="box-card">
                 <el-upload
@@ -15,63 +28,38 @@
                   :before-upload="beforeUpload"
                   :auto-upload="false"
                   :limit="1"
-                  action="http://node4.wefile.com:4333/internal/ocr/doc_restore"
+                  :action="apiUrl"
                 >
-                  <el-button size="small" type="primary">点击上传</el-button>
-                  <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div>
+                  <el-button size="small" type="primary">上传图片</el-button>
+                  <!-- <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div> -->
                 </el-upload>
+                <el-input type="hidden" :value="imageSrc" name="url" />
                 <div style="text-align:center;margin-top:30px">
-                  <el-button type="success" round @click="onSubmit">分析页面</el-button>
+                  <el-button type="success" round @click="onSubmit">处理图片</el-button>
                 </div>
-              </el-card>
-            </el-row>
-            <el-row :gutter="10" class="mb10">
-              <el-card>
-                <el-tabs v-model="activeName" type="card">
-                  <el-tab-pane label="JSON" name="json">
-                    <el-card class="box-card">
-                      <el-input
-                        ref="json_resp"
-                        type="textarea"
-                        :value="jsonText"
-                        disabled
-                        readonly
-                        rows="25"
-                        style="width: 100%; height: 100%"
-                      />
-                    </el-card>
-                  </el-tab-pane>
-                </el-tabs>
-
               </el-card>
             </el-row>
           </el-col>
 
-          <el-col :sm="24" :md="9" style="text-align: center;line-height: 60px;">
+          <el-col :sm="20" :md="9" style="text-align: center;line-height: 20px;">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>上传原图</span>
+                <span>原图预览</span>
               </div>
               <div>
                 <el-image :src="imageSrc" :style="imageStyle" :preview-src-list="srcList" />
               </div>
             </el-card>
           </el-col>
-          <el-col :sm="24" :md="9" style="text-align: center;line-height: 60px;">
+          <el-col :sm="24" :md="9" style="text-align: center;line-height: 20px;">
             <el-card class="box-card">
               <div slot="header" class="clearfix">
-                <span>结果预览</span>
-                <el-button ref="downloadBtn" style="float: right; padding: 10px 5px" type="primary" @click="download">下载文件</el-button>
+                <span>结果下载</span>
               </div>
-              <div class="demo-image__error">
-                <el-image :src="destSrc" :style="imageStyle" :preview-src-list="destSrcList">
-                  <div slot="error" class="image-slot">
-                    <i class="el-icon-picture-outline" />
-                  </div>
-                </el-image>
+              <div style="margin:30px 0">
+                <el-link ref="downloadBtn" type="primary" :href="downloadLink" :disabled="isDisable">下载word文件</el-link>
               </div>
             </el-card>
-
           </el-col>
         </el-row>
       </template>
@@ -80,20 +68,30 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'DocRestore',
   data() {
     return {
       fileList: [],
+      apiUrl: 'https://api-internal.wefile.com/internal/ocr/doc_restore',
+
       downloadLink: '',
-      srcList: ['https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240321151258.jpg'],
-      imageSrc: 'https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240321151258.jpg',
+      srcList: [
+        'https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/微信图片_20240321151258.jpg'
+      ],
+      imageSrc: 'https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/微信图片_20240321151258.jpg',
+
       jsonText: '',
       destSrc: '',
       destSrcList: [],
-      imageStyle: 'height: 600px',
+      imageStyle: '',
       activeName: 'json',
-      isDisable: true
+      isDisable: true,
+      sampleList: [
+        'https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/微信图片_20240321151258.jpg',
+        'https://converter-output.oss-cn-beijing.aliyuncs.com/inputs/微信图片_20240328125312.jpg'
+      ]
     }
   },
   methods: {
@@ -121,15 +119,67 @@ export default {
       }
       return isJPGorPNG && isLt2M
     },
+    clickImage(index) {
+      console.log('click', index)
+      this.imageSrc = this.sampleList[index]
+      this.srcList = [this.sampleList[index]]
+      this.destSrc = ''
+      this.destSrcList = [this.destSrc]
+    },
     onSubmit() {
-      this.$refs.upload.submit()
+      if (this.existUnuploadedFiles()) {
+        this.$refs.upload.submit()
+        console.log('submit file')
+      } else {
+        this.submitData()
+        console.log('submit form')
+      }
+
       console.log('submit!')
+    },
+    submitData() {
+      const formData = new FormData()
+      formData.append('url', this.imageSrc)
+      axios.post(this.apiUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+        .then(response => {
+          // 处理响应
+          console.log('Data submitted:', response.data)
+          var jsonObj = response.data
+          this.jsonText = JSON.stringify(jsonObj.result, null, 2)
+          this.downloadLink = jsonObj.downloadLink
+
+          this.imageSrc = jsonObj.sourceLink
+          this.srcList = [this.imageSrc]
+
+          this.isDisable = false
+        })
+        .catch(error => {
+          // 处理错误
+          console.error('Submission error:', error)
+        })
+    },
+    existUnuploadedFiles() {
+      const { uploadFiles } = this.$refs.upload
+      const unuploadedFiles = uploadFiles.filter(file => file.status !== 'success')
+      if (unuploadedFiles.length > 0) {
+        return true
+      } else {
+        return false
+      }
     },
     // method to handle the success event
     handleSuccess(response, file, fileList) {
       console.log('File uploaded successfully:', response)
       this.jsonText = JSON.stringify(response.result, null, 2)
-      this.downloadLink = response.imageLink
+      this.downloadLink = response.downloadLink
+
+      this.imageSrc = response.sourceLink
+      this.srcList = [this.imageSrc]
+
       this.isDisable = false
       this.$refs.upload.clearFiles()
     },

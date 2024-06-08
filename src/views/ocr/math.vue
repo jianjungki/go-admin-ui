@@ -5,13 +5,13 @@
         <el-row :gutter="10" class="mb10">
           <el-card class="box-card" style="text-align:center">
             <p style="font-size:32px">
-              公式识别
+              通用转换-版面还原
             </p>
             <div style="color:#787878">
               <p>
-                将图片内的公式识别出来
+                将图片版面还原为Office等格式
               </p>
-              <p>适合试卷和论文的识别</p>
+              <p>适合较清晰图片的识别</p>
             </div>
           </el-card>
         </el-row>
@@ -29,11 +29,11 @@
                   :auto-upload="false"
                   action="https://api-internal.wefile.com/ocr/mix"
                 >
-                  <el-button size="small" type="primary">上传图片</el-button>
-                  <!-- <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div> -->
+                  <el-button size="small" type="primary">点击上传</el-button>
+                  <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div>
                 </el-upload>
                 <div style="text-align:center;margin-top:30px">
-                  <el-button type="success" round @click="onSubmit">处理图片</el-button>
+                  <el-button type="success" round @click="onSubmit">分析页面</el-button>
                 </div>
               </el-card>
             </el-row>

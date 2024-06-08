@@ -15,7 +15,7 @@
                   :before-upload="beforeUpload"
                   :auto-upload="false"
                   :limit="1"
-                  action="http://node4.wefile.com:4333/internal/ocr/common"
+                  action="https://api-internal.wefile.com/internal/ocr/common"
                 >
                   <el-button size="small" type="primary">点击上传</el-button>
                   <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div>
@@ -71,7 +71,7 @@ export default {
       imageSrc: '',
       markdownText: '',
       jsonText: '',
-      imageStyle: 'width: 100%; height: 300px',
+      imageStyle: '',
       activeName: 'json'
     }
   },

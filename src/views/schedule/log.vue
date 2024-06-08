@@ -56,7 +56,7 @@ export default {
   methods: {
     initWebSocket() { // 初始化weosocket
       console.log(this.$store.state.user.token)
-      const wsuri = 'ws://node4.wefile.com:8000/ws/' + this.id + '/' + this.group + '?token=' + this.$store.state.user.token
+      const wsuri = 'ws://admin-api.wefile.com/ws/' + this.id + '/' + this.group + '?token=' + this.$store.state.user.token
       this.websock = new WebSocket(wsuri)
       this.websock.onmessage = this.websocketonmessage
       this.websock.onopen = this.websocketonopen
