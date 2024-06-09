@@ -3,12 +3,10 @@
     <el-row :gutter="10" class="mb10">
       <el-card class="box-card" style="text-align:center">
         <p style="font-size:32px">
-          文本增强识别
+          PDF转Word
         </p>
         <div style="color:#787878">
-          <p>
-            将文档内容识别出来，优于传统识别，版面和文字效果最佳
-          </p>
+          将图片、PDF转换为可编辑的Word文档
         </div>
       </el-card>
     </el-row>
@@ -28,7 +26,7 @@
         >
           <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
             <i class="el-icon-upload" />
-            <div class="el-upload__text">将图片或PDF拖到此处，或<em>点击上传</em></div>
+            <div class="el-upload__text"><em>点击上传文件</em><br>或将图片、PDF拖到此处</div>
             <div class="el-upload__tip">最大文件为30M</div>
           </div>
           <div v-if="!isUploaded && uploadPercentage > 0" class="progress-container">
@@ -37,7 +35,7 @@
           </div>
           <div v-if="isUploaded" class="upload-success">
             <i class="el-icon-check" />
-            <div class="el-upload__text">文件转换成功</div>
+            <div class="el-upload__text">文件转换成功！</div>
             <el-button type="primary" style="font-size:20px" @click="downloadFile">下载转换后的文件</el-button>
           </div>
         </el-upload>
@@ -58,11 +56,11 @@ export default {
   },
   methods: {
     beforeUpload(file) {
-      const isLt200M = file.size / 1024 / 1024 < 200
-      if (!isLt200M) {
-        this.$message.error('上传文件大小不能超过 200MB!')
+      const isLt30M = file.size / 1024 / 1024 < 30
+      if (!isLt30M) {
+        this.$message.error('上传文件大小不能超过 30MB!')
       }
-      return isLt200M
+      return isLt30M
     },
     handleProgress(event, file, fileList) {
       this.uploadPercentage = Math.round((event.loaded / event.total) * 100)
@@ -94,7 +92,8 @@ export default {
     font-size: 20px;
   }
   .el-upload__tip{
-    font-size: 20px;
+    font-size: 14px;
+    color:#787878;
   }
   .upload-container {
     width: 100%;
