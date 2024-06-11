@@ -16,7 +16,7 @@
           ref="upload"
           class="upload-demo"
           drag
-          action="https://api-internal.wefile.com/ocr/text_combine"
+          action="https://api-internal.wefile.com/ocr/text_combine?format=docx"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :on-error="handleError"
