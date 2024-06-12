@@ -1,16 +1,15 @@
 <template>
   <el-col>
-    <el-row :gutter="10" class="mb10">
-      <el-card class="box-card" style="text-align:center">
-        <p style="font-size:32px">
+    <el-row style="text-align: center;">
+      <section>
+        <h2>
           PDF转Word
-        </p>
+        </h2>
         <div style="color:#787878">
           将图片、PDF转换为可编辑的Word文档
         </div>
-      </el-card>
-    </el-row>
-    <el-row>
+        <br>
+      </section>
       <div class="upload-container">
         <el-upload
           ref="upload"
@@ -31,12 +30,13 @@
           </div>
           <div v-if="!isUploaded && uploadPercentage > 0" class="progress-container">
             <div class="el-upload__text">文件处理中...</div>
-            <el-progress :text-inside="true" :stroke-width="26" :percentage="uploadPercentage" />
+            <el-progress :text-inside="true" :stroke-width="2" :percentage="uploadPercentage" />
           </div>
           <div v-if="isUploaded" class="upload-success">
-            <i class="el-icon-check" />
-            <div class="el-upload__text">文件转换成功！</div>
-            <el-button type="primary" style="font-size:20px" @click="downloadFile">下载转换后的文件</el-button>
+            <i class="el-icon-download" />
+            <div class="el-uploadtext">文件转换成功！</div>
+            <br>
+            <el-button type="primary" style="font-size:14px" @click="downloadFile">下载转换后的文件</el-button>
           </div>
         </el-upload>
 
