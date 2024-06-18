@@ -1,223 +1,165 @@
 <template>
-  <div>
-    <BasicLayout>
-      <template #wrapper>
-        <el-row :gutter="10" class="mb10">
-          <el-card class="box-card" style="text-align:center">
-            <p style="font-size:32px">
-              公式增强识别
-            </p>
-            <div style="color:#787878">
-              <p>
-                将图片内的公式识别出来, 并且以mathml呈现
-              </p>
-              <p>适合试卷和论文的识别</p>
-            </div>
-          </el-card>
-        </el-row>
-        <el-row :gutter="10" class="mb10">
-          <el-col :sm="20" :md="6">
-            <el-row :gutter="10" class="mb10">
-              <el-card class="box-card">
-                <el-upload
-                  ref="upload"
-                  style="margin:15px;text-align:center"
-                  class="upload-demo"
-                  :on-success="handleSuccess"
-                  :on-error="handleError"
-                  :before-upload="beforeUpload"
-                  :on-change="handleChange"
-                  :action="apiUrl"
-                  :file-list="fileList"
-                >
-                  <el-button size="small" type="primary">上传图片</el-button>
-                </el-upload>
-                <div style="text-align:center;margin-bottom:8px">
-                  <span>或</span>
-                </div>
-                <div style="text-align: center;float:left;margin-bottom:15px">
-                  <el-input :value="imageSrc" placeholder="https://baidu.com/test.jpg" size="medium" style="float:left">
-                    <template slot="prepend">图片链接</template>
-                  </el-input>
-                </div>
-                <div style="text-align: center;margin-bottom:15px">
-                  <el-button size="small" type="primary" round @click="submitFunc">
-                    确定
-                  </el-button>
-                </div>
+  <el-col>
+    <el-row style="text-align: center;">
+      <section>
+        <p style="font-size:32px">
+          公式增强识别
+        </p>
+        <div style="color:#787878">
+          <p>
+            将图片内的公式识别出来, 并且以mathml呈现
+          </p>
+          <p>适合试卷和论文的识别</p>
+        </div>
+        <br>
+      </section>
+      <div class="upload-container">
+        <el-upload
+          ref="upload"
+          class="upload-demo"
+          drag
+          :disabled="disable"
+          action="https://api-internal.wefile.com/ocr/combine"
+          :before-upload="beforeUpload"
+          :on-progress="handleProgress"
+          :on-error="handleError"
+          :on-success="handleSuccess"
+          :on-remove="handleRemove"
+          :show-file-list="false"
+        >
 
-              </el-card>
-            </el-row>
-          </el-col>
+          <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
+            <i class="el-icon-upload" />
+            <div class="el-upload__text"><em>点击上传文件</em><br>或将图片、PDF拖到此处</div>
+            <div class="el-upload__tip">最大文件为30M</div>
+          </div>
+          <div v-if="!isUploaded && uploadPercentage > 0" class="progress-container">
+            <div class="el-upload__text">文件处理中...</div>
+            <el-progress :text-inside="true" :stroke-width="2" :percentage="uploadPercentage" />
+          </div>
+          <div v-if="isUploaded" class="upload-success">
+            <i class="el-icon-download" style="font-size:30px; margin: 10px" />
+            <div class="el-uploadtext">文件转换成功！</div>
+            <br>
+            <el-button type="primary" style="font-size:14px" @click="downloadFile">下载转换后的文件</el-button>
+            <el-button type="primary" style="font-size:14px;margin: 10px" @click="reUpload">继续转换</el-button>
+          </div>
+        </el-upload>
 
-          <el-col :sm="20" :md="9" style="text-align: center;line-height: 20px;">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>原图预览</span>
-              </div>
-              <div>
-                <el-image :src="imageSrc" :style="imageStyle" />
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :sm="24" :md="9" style="text-align: center;line-height: 20px;">
-            <el-card class="box-card">
-              <div slot="header" class="clearfix">
-                <span>结果下载</span>
-              </div>
-              <div>
-                <div v-for="(value, key) in showList" :key="key" style="text-align:center;margin:30px 0">
-                  <el-link type="primary" :href="value">{{ key }}下载</el-link>
-                </div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </template>
-    </BasicLayout>
-  </div>
+      </div>
+    </el-row>
+  </el-col>
 </template>
 
 <script>
-import axios from 'axios'
 export default {
-  name: 'MathEnhance',
   data() {
     return {
-      fileList: [],
-      apiUrl: 'https://api-internal.wefile.com/ocr/combine',
-
-      downloadLink: '',
-      srcList: [
-        'https://ocr-exmaple.oss-cn-beijing.aliyuncs.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240504170819.jpg'
-      ],
-      imageSrc: 'https://ocr-exmaple.oss-cn-beijing.aliyuncs.com/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20240504170819.jpg',
-      markdownText: '',
-      jsonText: '',
-      imageStyle: '',
-      activeName: 'json',
-      showList: {}
-      // loadingProcess: false
+      uploadPercentage: 0,
+      isUploaded: false,
+      disable: false,
+      fileUrl: '' // 存储上传后的文件 URL
     }
   },
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList)
-    },
-    handlePreview(file) {
-      this.imageSrc = file.url
-      console.log(file)
-    },
-    handleChange(file, fileList) {
-      fileList = []
-      // 检查是否选择了文件
-      if (!file) {
-        console.log('file file is none')
-        this.imageSrc = ''
-        return
-      }
-      // 使用FileReader来读取文件内容
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        // 文件读取完成后，更新imageUrl以显示在el-image中
-        this.imageSrc = e.target.result
-      }
-      reader.readAsDataURL(file.raw)
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`)
+    reUpload() {
+      this.uploadPercentage = 0
+      this.isUploaded = false
+      this.disable = false
+      this.fileUrl = ''
     },
     beforeUpload(file) {
-      const isJPGorPNG = file.type === 'image/jpeg' || file.type === 'image/png'
-      const isLt50M = file.size / 1024 / 1024 < 50
-
-      if (!isJPGorPNG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+      const isLt30M = file.size / 1024 / 1024 < 30
+      if (!isLt30M) {
+        this.$message.error('上传文件大小不能超过 30MB!')
       }
-      if (!isLt50M) {
-        this.$message.error('上传头像图片大小不能超过 50MB!')
-      }
-      return isJPGorPNG && isLt50M
+      return isLt30M
     },
-    cancelRunning() {
-      this.$refs.upload.abort()
-      this.loadingProcess = false
-      this.fileList = []
+    handleProgress(event, file, fileList) {
+      this.uploadPercentage = Math.round((event.loaded / event.total) * 100)
     },
-    submitFunc() {
-      if (this.existUnuploadedFiles()) {
-        this.$refs.upload.submit()
-        console.log('submit file')
-      } else {
-        this.submitData()
-        console.log('submit form')
-      }
-      // this.loadingProcess = true
-      console.log('submit!')
-    },
-    submitData() {
-      const formData = new FormData()
-      formData.append('url', this.imageSrc)
-      axios.post(this.apiUrl, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then(response => {
-          // 处理响应
-          console.log('Data submitted:', response.data)
-          this.showList = response.data.exportDownloadList
-
-          this.imageSrc = response.data.imageLink
-          this.srcList = [this.imageSrc]
-
-          this.isDisable = false
-
-          // this.loadingProcess = false
-        })
-        .catch(error => {
-          // 处理错误
-          console.error('Submission error:', error)
-        })
-    },
-    existUnuploadedFiles() {
-      const { uploadFiles } = this.$refs.upload
-      const unuploadedFiles = uploadFiles.filter(file => file.status !== 'success')
-      if (unuploadedFiles.length > 0) {
-        return true
-      } else {
-        return false
-      }
-    },
-    // method to handle the success event
     handleSuccess(response, file, fileList) {
-      console.log('Data submitted:', response)
-      this.showList = response.exportDownloadList
-
-      this.imageSrc = response.imageLink
-      this.srcList = [this.imageSrc]
-
-      this.isDisable = false
-      this.$refs.upload.clearFiles()
-      this.loadingProcess = false
+      this.isUploaded = true
+      this.disable = true
+      this.fileUrl = response.exportDownloadList['DOCX']
     },
-    // method to handle the error event
-    handleError(err, file, fileList) {
-      this.loadingProcess = false
-      console.error('Error uploading file:', err)
+    handleError(file, fileList) {
+      this.uploadPercentage = 0
+      this.isUploaded = false
+      this.$message.error(`文件 ${file.name} 上传失败。`)
+    },
+    handleRemove(file, fileList) {
+      this.uploadPercentage = 0
+      this.isUploaded = false
+    },
+    downloadFile() {
+      window.open(this.fileUrl, '_blank')
     }
   }
 }
 </script>
 
-  <style lang="scss" scoped>
-    .list-group-item{
-      padding: 18px 0;
-    }
-    .svg-icon{
-      margin-right: 5px;
-    }
+  <style scoped>
+  .el-upload__text{
+    margin-bottom: 15px;
+    margin-top: 10px;
+    font-size: 20px;
+  }
+  .el-upload__tip{
+    font-size: 14px;
+    color:#787878;
+  }
+  .upload-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .upload-demo {
+    width: 80%;
+    height: 500px;
+    border: 2px dashed #d9d9d9;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    transition: border 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .upload-placeholder, .upload-success{
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .progress-container{
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  </style>
+  <style scoped>
+
+  /deep/ .el-progress-bar{
+    height: 100px;
+    width: 500px;
+  }
+
+  /deep/ .el-upload .el-upload-dragger{
+    height: 500px;
+  }
+  /deep/ .el-upload{
+    height: 500px;
+  }
   </style>

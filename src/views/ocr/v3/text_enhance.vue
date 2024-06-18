@@ -15,6 +15,7 @@
           ref="upload"
           class="upload-demo"
           drag
+          :disabled="disable"
           action="https://api-internal.wefile.com/ocr/text_combine?format=docx"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
@@ -23,6 +24,7 @@
           :on-remove="handleRemove"
           :show-file-list="false"
         >
+
           <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
             <i class="el-icon-upload" />
             <div class="el-upload__text"><em>点击上传文件</em><br>或将图片、PDF拖到此处</div>
@@ -33,10 +35,11 @@
             <el-progress :text-inside="true" :stroke-width="2" :percentage="uploadPercentage" />
           </div>
           <div v-if="isUploaded" class="upload-success">
-            <i class="el-icon-download" />
+            <i class="el-icon-download" style="font-size:30px; margin: 10px" />
             <div class="el-uploadtext">文件转换成功！</div>
             <br>
             <el-button type="primary" style="font-size:14px" @click="downloadFile">下载转换后的文件</el-button>
+            <el-button type="primary" style="font-size:14px;margin: 10px" @click="reUpload">继续转换</el-button>
           </div>
         </el-upload>
 
@@ -51,10 +54,17 @@ export default {
     return {
       uploadPercentage: 0,
       isUploaded: false,
+      disable: false,
       fileUrl: '' // 存储上传后的文件 URL
     }
   },
   methods: {
+    reUpload() {
+      this.uploadPercentage = 0
+      this.isUploaded = false
+      this.disable = false
+      this.fileUrl = ''
+    },
     beforeUpload(file) {
       const isLt30M = file.size / 1024 / 1024 < 30
       if (!isLt30M) {
@@ -67,6 +77,7 @@ export default {
     },
     handleSuccess(response, file, fileList) {
       this.isUploaded = true
+      this.disable = true
       this.fileUrl = response.exportDownloadList['DOCX']
     },
     handleError(file, fileList) {
