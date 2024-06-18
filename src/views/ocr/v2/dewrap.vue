@@ -2,9 +2,9 @@
   <el-col>
     <el-row style="text-align: center;">
       <section>
-        <p style="font-size:32px">
+        <h2>
           文档图像优化
-        </p>
+        </h2>
         <div style="color:#787878">
           <p>
             智能定位图像中文档主体的边缘
