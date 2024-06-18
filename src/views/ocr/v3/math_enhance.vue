@@ -2,9 +2,9 @@
   <el-col>
     <el-row style="text-align: center;">
       <section>
-        <p style="font-size:32px">
+        <h2>
           公式增强识别
-        </p>
+        </h2>
         <div style="color:#787878">
           <p>
             将图片内的公式识别出来, 并且以mathml呈现
