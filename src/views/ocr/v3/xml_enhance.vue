@@ -55,7 +55,8 @@ export default {
       uploadPercentage: 0,
       isUploaded: false,
       disable: false,
-      fileUrl: '' // 存储上传后的文件 URL
+      fileUrl: '', // 存储上传后的文件 URL
+      fileName: ''
     }
   },
   methods: {
@@ -64,8 +65,10 @@ export default {
       this.isUploaded = false
       this.disable = false
       this.fileUrl = ''
+      this.fileName = ''
     },
     beforeUpload(file) {
+      this.fileName = file.name
       const isLt30M = file.size / 1024 / 1024 < 30
       if (!isLt30M) {
         this.$message.error('上传文件大小不能超过 30MB!')
@@ -89,8 +92,40 @@ export default {
       this.uploadPercentage = 0
       this.isUploaded = false
     },
+    saveAs(blob, filename) {
+      if (window.navigator.msSaveOrOpenBlob) {
+        navigator.msSaveBlob(blob, filename)
+      } else {
+        const link = document.createElement('a')
+        const body = document.querySelector('body')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = filename // 修改文件名
+        link.style.display = 'none'
+        body.appendChild(link)
+        link.click()
+        body.removeChild(link)
+        window.URL.revokeObjectURL(link.href)
+      }
+    },
+    getBlob(url) { // url:是文件在oss上的地址
+      return new Promise(resolve => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', url, true)
+        xhr.responseType = 'blob'// 请求类型是blob类型
+        xhr.crossOrigin = '*' // 解决跨域问题
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            resolve(xhr.response)
+          }
+        }
+        xhr.send()
+      })
+    },
     downloadFile() {
-      window.open(this.fileUrl, '_blank')
+      this.getBlob(this.fileUrl).then(res => { // url:文件在oss上的地址
+        var fileBaseName = this.removeFileExtension(this.fileName)
+        this.saveAs(res, fileBaseName + '.md') // filename:文件名，可自定义
+      })
     }
   }
 }
