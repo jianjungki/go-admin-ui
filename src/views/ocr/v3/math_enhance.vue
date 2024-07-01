@@ -41,8 +41,10 @@
             <i class="el-icon-download" style="font-size:30px; margin: 10px" />
             <div class="el-uploadtext">文件转换成功！</div>
             <br>
-            <el-button type="primary" style="font-size:14px" @click="downloadFile">下载转换后的文件</el-button>
-            <el-button type="primary" style="font-size:14px;margin: 10px" @click="reUpload">继续转换</el-button>
+            <div>
+              <el-button type="primary" style="font-size:20px; margin-right:20px" @click="downloadFile">下载转换后的文件</el-button>
+              <el-button type="warning" style="font-size:20px;margin: 10px" @click="reUpload">继续转换</el-button>
+            </div>
           </div>
         </el-upload>
 
@@ -123,6 +125,11 @@ export default {
         }
         xhr.send()
       })
+    },
+    removeFileExtension(fileName) {
+      const lastDotIndex = fileName.lastIndexOf('.')
+      if (lastDotIndex === -1) return fileName // 如果没有点号，则返回原文件名
+      return fileName.substring(0, lastDotIndex)
     },
     downloadFile() {
       this.getBlob(this.fileUrl).then(res => { // url:文件在oss上的地址

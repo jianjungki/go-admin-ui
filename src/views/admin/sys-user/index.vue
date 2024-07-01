@@ -137,6 +137,28 @@
                   <span>{{ parseTime(scope.row.createdAt) }}</span>
                 </template>
               </el-table-column>
+
+              <el-table-column
+                label="最后登录时间"
+                prop="lastLoginAt"
+                sortable="custom"
+                width="155"
+              >
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.createdAt) }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="到期时间"
+                prop="dueAt"
+                sortable="custom"
+                width="155"
+              >
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.createdAt) }}</span>
+                </template>
+              </el-table-column>
               <el-table-column
                 label="操作"
                 width="160"
