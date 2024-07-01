@@ -19,7 +19,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/ocr/combine?format=docx"
+          action="https://api-internal.wefile.com/ocr/mix"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :on-error="handleError"
