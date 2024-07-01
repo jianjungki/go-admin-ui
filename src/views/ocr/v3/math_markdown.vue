@@ -19,7 +19,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/ocr/mix"
+          action="https://api-internal.wefile.com/ocr/combine?format=markdown"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :on-error="handleError"
@@ -86,7 +86,7 @@ export default {
     handleSuccess(response, file, fileList) {
       this.isUploaded = true
       this.disable = true
-      this.fileUrl = response.markdownLink
+      this.fileUrl = response.exportDownloadList['DOCX']
     },
     handleError(file, fileList) {
       this.uploadPercentage = 0
