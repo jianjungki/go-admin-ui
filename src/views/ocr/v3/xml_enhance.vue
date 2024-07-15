@@ -131,7 +131,7 @@ export default {
     downloadFile() {
       this.getBlob(this.fileUrl).then(res => { // url:文件在oss上的地址
         var fileBaseName = this.removeFileExtension(this.fileName)
-        this.saveAs(res, fileBaseName + '.md') // filename:文件名，可自定义
+        this.saveAs(res, fileBaseName + '.xml') // filename:文件名，可自定义
       })
     }
   }
