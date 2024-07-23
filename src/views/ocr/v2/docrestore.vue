@@ -30,7 +30,7 @@
 
           <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
             <i class="el-icon-upload" />
-            <div class="el-upload__text"><em>点击上传文件</em><br>或将图片、PDF拖到此处</div>
+            <div class="el-upload__text"><em>点击上传文件</em><br>或将图片拖到此处</div>
             <div class="el-upload__tip">最大文件为30M</div>
           </div>
           <div v-if="!isUploaded && uploadPercentage > 0" class="progress-container">
