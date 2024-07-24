@@ -145,7 +145,7 @@
                 width="155"
               >
                 <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.createdAt) }}</span>
+                  <span>{{ parseTime(scope.row.lastLoginAt) }}</span>
                 </template>
               </el-table-column>
 
@@ -156,7 +156,7 @@
                 width="155"
               >
                 <template slot-scope="scope">
-                  <span>{{ parseTime(scope.row.createdAt) }}</span>
+                  <span>{{ parseTime(scope.row.dueAt) }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -292,6 +292,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
+              <el-form-item label="到期时间">
+                <el-date-picker
+                  v-model="form.dueAt"
+                  type="datetime"
+                  :default-value="currentDate"
+                  placeholder="选择日期时间"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
               <el-form-item label="备注">
                 <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
               </el-form-item>
@@ -406,6 +416,7 @@ export default {
         // 上传的地址
         url: process.env.VUE_APP_BASE_API + '/system/user/importData'
       },
+      currentDate: new Date(),
       // 查询参数
       queryParams: {
         pageIndex: 1,
@@ -541,7 +552,8 @@ export default {
         status: '2',
         remark: undefined,
         postIds: undefined,
-        roleIds: undefined
+        roleIds: undefined,
+        dueAt: undefined
       }
       this.resetForm('form')
     },
