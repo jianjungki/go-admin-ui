@@ -19,7 +19,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/ocr/math"
+          action="https://api-internal.wefile.com/v1/wefile/math_markdown"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :http-request="uploadFileWithToken"
@@ -141,7 +141,7 @@ export default {
           method: 'POST',
           body: formData,
           headers: {
-            Authorization: 'Bearer' + getToken()
+            Authorization: 'Bearer ' + getToken()
           }
         })
         if (response.ok) {

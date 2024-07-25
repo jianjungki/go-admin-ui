@@ -122,7 +122,7 @@ export default {
           method: 'POST',
           body: formData,
           headers: {
-            Authorization: 'Bearer' + getToken()
+            Authorization: 'Bearer ' + getToken()
           }
         })
         if (response.ok) {

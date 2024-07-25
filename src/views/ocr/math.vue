@@ -27,7 +27,7 @@
                   :on-error="handleError"
                   :before-upload="beforeUpload"
                   :auto-upload="false"
-                  action="https://api-internal.wefile.com/ocr/mix"
+                  action="https://api-internal.wefile.com/v1/wefile/math_enhance"
                 >
                   <el-button size="small" type="primary">点击上传</el-button>
                   <div slot="tip" class="el-upload__tip" style="margin-top: 20px;">由于资源有限，只能上传图片文件(jpg, png)</div>

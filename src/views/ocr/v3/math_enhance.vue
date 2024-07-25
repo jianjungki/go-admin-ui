@@ -19,7 +19,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/ocr/combine?format=docx"
+          action="https://api-internal.wefile.com/v1/wefile/math_enhance"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :on-remove="handleRemove"
@@ -136,7 +136,7 @@ export default {
           method: 'POST',
           body: formData,
           headers: {
-            Authorization: 'Bearer' + getToken()
+            Authorization: 'Bearer ' + getToken()
           }
         })
         if (response.ok) {

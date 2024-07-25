@@ -16,7 +16,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/ocr/text_combine?format=docx"
+          action="https://api-internal.wefile.com/v1/wefile/text_enhance"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :http-request="uploadFileWithToken"
@@ -133,7 +133,7 @@ export default {
           method: 'POST',
           body: formData,
           headers: {
-            Authorization: 'Bearer' + getToken()
+            Authorization: 'Bearer ' + getToken()
           }
         })
         if (response.ok) {

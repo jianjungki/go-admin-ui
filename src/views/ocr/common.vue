@@ -347,7 +347,7 @@ export default {
       }
 
       // Send the request
-      axios.post('https://api-internal.wefile.com/ocr/common', data)
+      axios.post('https://api-internal.wefile.com/v1/wefile/common', data)
         .then(response => {
           // Handle response
           console.log('File and form data have been uploaded successfully.', response.data)
