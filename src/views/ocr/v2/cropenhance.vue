@@ -91,12 +91,13 @@
 
 <script>
 import axios from 'axios'
+import { getToken } from '@/utils/auth'
 export default {
   name: 'CropEnhance',
   data() {
     return {
       fileList: [],
-      apiUrl: 'https://api-internal.wefile.com/internal/ocr/crop_enhance',
+      apiUrl: 'https://api-internal.wefile.com/v1/internal/a/crop_enhance',
 
       downloadLink: '',
       srcList: [
@@ -146,6 +147,31 @@ export default {
       this.srcList = [this.sampleList[index]]
       this.destSrc = ''
       this.destSrcList = [this.destSrc]
+    },
+    async uploadFileWithToken(uploadRequest) {
+      console.log('upload file with token')
+      const formData = new FormData()
+      formData.append('file', uploadRequest.file)
+      formData.append('format', 'docx')
+
+      try {
+        const response = await fetch(uploadRequest.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: 'Bearer ' + getToken()
+          }
+        })
+        if (response.ok) {
+          const data = await response.json()
+          console.log(data)
+          this.handleSuccess(data)
+        } else {
+          this.handleError(response.statusText)
+        }
+      } catch (err) {
+        this.handleError(err)
+      }
     },
     onSubmit() {
       if (this.existUnuploadedFiles()) {

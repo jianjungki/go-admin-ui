@@ -19,7 +19,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/internal/ocr/doc_restore"
+          action="https://api-internal.wefile.com/v1/internal/a/doc_restore"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :http-request="uploadFileWithToken"
@@ -93,29 +93,11 @@ export default {
       this.isUploaded = false
       this.$message.error(`文件 ${file.name} 上传失败。`)
     },
-    handleRemove(file, fileList) {
-      this.uploadPercentage = 0
-      this.isUploaded = false
-    },
-    saveAs(blob, filename) {
-      if (window.navigator.msSaveOrOpenBlob) {
-        navigator.msSaveBlob(blob, filename)
-      } else {
-        const link = document.createElement('a')
-        const body = document.querySelector('body')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = filename // 修改文件名
-        link.style.display = 'none'
-        body.appendChild(link)
-        link.click()
-        body.removeChild(link)
-        window.URL.revokeObjectURL(link.href)
-      }
-    },
     async uploadFileWithToken(uploadRequest) {
       console.log('upload file with token')
       const formData = new FormData()
       formData.append('file', uploadRequest.file)
+      formData.append('format', 'docx')
 
       try {
         const response = await fetch(uploadRequest.action, {
@@ -134,6 +116,25 @@ export default {
         }
       } catch (err) {
         this.handleError(err)
+      }
+    },
+    handleRemove(file, fileList) {
+      this.uploadPercentage = 0
+      this.isUploaded = false
+    },
+    saveAs(blob, filename) {
+      if (window.navigator.msSaveOrOpenBlob) {
+        navigator.msSaveBlob(blob, filename)
+      } else {
+        const link = document.createElement('a')
+        const body = document.querySelector('body')
+        link.href = window.URL.createObjectURL(blob)
+        link.download = filename // 修改文件名
+        link.style.display = 'none'
+        body.appendChild(link)
+        link.click()
+        body.removeChild(link)
+        window.URL.revokeObjectURL(link.href)
       }
     },
     getBlob(url) { // url:是文件在oss上的地址
