@@ -22,10 +22,9 @@
           action="https://api-internal.wefile.com/ocr/combine?format=docx"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
-          :on-error="handleError"
-          :on-success="handleSuccess"
           :on-remove="handleRemove"
           :show-file-list="false"
+          :http-request="uploadFileWithToken"
         >
 
           <div v-if="!isUploaded && uploadPercentage == 0" class="upload-placeholder">
@@ -54,6 +53,7 @@
 </template>
 
 <script>
+import { getToken } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -125,6 +125,30 @@ export default {
         }
         xhr.send()
       })
+    },
+    async uploadFileWithToken(uploadRequest) {
+      console.log('upload file with token')
+      const formData = new FormData()
+      formData.append('file', uploadRequest.file)
+
+      try {
+        const response = await fetch(uploadRequest.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: 'Bearer' + getToken()
+          }
+        })
+        if (response.ok) {
+          const data = await response.json()
+          console.log(data)
+          this.handleSuccess(data)
+        } else {
+          this.handleError(response.statusText)
+        }
+      } catch (err) {
+        this.handleError(err)
+      }
     },
     removeFileExtension(fileName) {
       const lastDotIndex = fileName.lastIndexOf('.')
