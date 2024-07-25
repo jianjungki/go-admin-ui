@@ -127,6 +127,7 @@ export default {
       console.log('upload file with token')
       const formData = new FormData()
       formData.append('file', uploadRequest.file)
+      formData.append('format', 'docx')
 
       try {
         const response = await fetch(uploadRequest.action, {
