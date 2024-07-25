@@ -7,16 +7,7 @@
           <el-form-item label="路径查询" prop="path">
             <el-input
               v-model="queryParams.path"
-              placeholder="调用路径"
-              clearable
-              size="small"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
-          <el-form-item label="路径查询" prop="method">
-            <el-input
-              v-model="queryParams.path"
-              placeholder="调用方法"
+              placeholder="计划名称"
               clearable
               size="small"
               @keyup.enter.native="handleQuery"
@@ -31,7 +22,7 @@
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['admin:sysRolePermission:add']"
+              v-permisaction="['admin:sysPlan:add']"
               type="primary"
               icon="el-icon-plus"
               size="mini"
@@ -41,7 +32,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['admin:sysRolePermission:edit']"
+              v-permisaction="['admin:sysPlan:edit']"
               type="success"
               icon="el-icon-edit"
               size="mini"
@@ -52,7 +43,7 @@
           </el-col>
           <el-col :span="1.5">
             <el-button
-              v-permisaction="['admin:sysRolePermission:remove']"
+              v-permisaction="['admin:sysPlan:remove']"
               type="danger"
               icon="el-icon-delete"
               size="mini"
@@ -63,12 +54,12 @@
           </el-col>
         </el-row>
 
-        <el-table v-loading="loading" :data="sysRolePermissionList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading" :data="sysPlanList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center" />
-          <el-table-column label="权限id" width="80" align="center" prop="id" />
-          <el-table-column label="权限标识" align="center" prop="permission" />
-          <el-table-column label="权限路径" align="center" prop="path" />
-          <el-table-column label="权限调用方法" align="center" prop="method" />
+          <el-table-column label="套餐id" width="80" align="center" prop="id" />
+          <el-table-column label="套餐名称" align="center" prop="name" />
+          <el-table-column label="套餐配额" align="center" prop="quota" />
+          <el-table-column label="套餐价格" align="center" prop="price" />
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template slot-scope="scope">
               <el-popconfirm
@@ -79,7 +70,7 @@
               >
                 <el-button
                   slot="reference"
-                  v-permisaction="['admin:sysRolePermission:edit']"
+                  v-permisaction="['admin:sysPlan:edit']"
                   size="mini"
                   type="text"
                   icon="el-icon-edit"
@@ -94,7 +85,7 @@
               >
                 <el-button
                   slot="reference"
-                  v-permisaction="['admin:sysRolePermission:remove']"
+                  v-permisaction="['admin:sysPlan:remove']"
                   size="mini"
                   type="text"
                   icon="el-icon-delete"
@@ -117,46 +108,59 @@
         <el-dialog :title="title" :visible.sync="open" width="500px">
           <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 
-            <el-form-item label="" prop="permission">
+            <el-form-item label="套餐名称" prop="name">
               <el-input
-                v-model="form.permission"
+                v-model="form.name"
                 placeholder=""
               />
             </el-form-item>
-            <el-form-item label="" prop="method">
+            <el-form-item label="套餐描述" prop="desc">
               <el-input
-                v-model="form.method"
+                v-model="form.desc"
                 placeholder=""
               />
             </el-form-item>
-            <el-form-item label="" prop="path">
+            <el-form-item label="套餐配额" prop="quota">
               <el-input
-                v-model="form.path"
+                v-model="form.quota"
                 placeholder=""
               />
             </el-form-item>
-            <el-form-item label="" prop="roleId">
+            <el-form-item label="套餐价格" prop="price">
               <el-input
-                v-model="form.roleId"
+                v-model="form.price"
                 placeholder=""
               />
             </el-form-item>
+            <el-form-item label="套餐周期" prop="billingCycle">
+              <el-input
+                v-model="form.billingCycle"
+                placeholder=""
+              />
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+              <el-input
+                v-model="form.remark"
+                placeholder=""
+              />
+            </el-form-item>
+
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="primary" @click="submitForm">确 定</el-button>
             <el-button @click="cancel">取 消</el-button>
           </div>
         </el-dialog>
-        </el-form></el-card>
+      </el-card>
     </template>
   </BasicLayout>
 </template>
 
 <script>
-import { addSysRolePermission, delSysRolePermission, getSysRolePermission, listSysRolePermission, updateSysRolePermission } from '@/api/admin/sys-role-permission'
+import { addSysPlan, delSysPlan, getSysPlan, listSysPlan, updateSysPlan } from '@/api/admin/sys-plan'
 
 export default {
-  name: 'SysRolePermission',
+  name: 'SysPlan',
   components: {
   },
   data() {
@@ -178,7 +182,7 @@ export default {
       isEdit: false,
       // 类型数据字典
       typeOptions: [],
-      sysRolePermissionList: [],
+      sysPlanList: [],
 
       // 关系表类型
 
@@ -202,8 +206,8 @@ export default {
     /** 查询参数列表 */
     getList() {
       this.loading = true
-      listSysRolePermission(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-        this.sysRolePermissionList = response.data.list
+      listSysPlan(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+        this.sysPlanList = response.data.list
         this.total = response.data.count
         this.loading = false
       }
@@ -219,10 +223,12 @@ export default {
       this.form = {
 
         id: undefined,
-        permission: undefined,
-        method: undefined,
-        path: undefined,
-        roleId: undefined
+        quota: undefined,
+        price: undefined,
+        billingCycle: undefined,
+        remark: undefined,
+        name: undefined,
+        desc: undefined
       }
       this.resetForm('form')
     },
@@ -249,23 +255,23 @@ export default {
     handleAdd() {
       this.reset()
       this.open = true
-      this.title = '添加角色接口权限'
+      this.title = '添加SysPlan'
       this.isEdit = false
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
+      this.ids = selection.map(item => item.planId)
       this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const id = row.id || this.ids
-      getSysRolePermission(id).then(response => {
+      const planId = row.id || this.ids
+      getSysPlan(planId).then(response => {
         this.form = response.data
         this.open = true
-        this.title = '修改角色接口权限'
+        this.title = '修改套餐计划'
         this.isEdit = true
       })
     },
@@ -274,7 +280,7 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id !== undefined) {
-            updateSysRolePermission(this.form).then(response => {
+            updateSysPlan(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess(response.msg)
                 this.open = false
@@ -284,7 +290,7 @@ export default {
               }
             })
           } else {
-            addSysRolePermission(this.form).then(response => {
+            addSysPlan(this.form).then(response => {
               if (response.code === 200) {
                 this.msgSuccess(response.msg)
                 this.open = false
@@ -306,7 +312,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(function() {
-        return delSysRolePermission({ 'ids': Ids })
+        return delSysPlan({ 'ids': Ids })
       }).then((response) => {
         if (response.code === 200) {
           this.msgSuccess(response.msg)
