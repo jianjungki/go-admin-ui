@@ -129,23 +129,40 @@ export default {
       console.log('upload file with token')
       const formData = new FormData()
       formData.append('file', uploadRequest.file)
-      formData.append('format', 'docx')
 
       try {
-        const response = await fetch(uploadRequest.action, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            Authorization: 'Bearer ' + getToken()
+        // 创建 XMLHttpReadyState 对象
+        const xhr = new XMLHttpRequest()
+
+        xhr.open('POST', uploadRequest.action, true)
+        xhr.setRequestHeader('Authorization', 'Bearer ' + getToken())
+
+        // 监听 'progress' 事件，获取上传进度
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            // 触发自定义的 "on-progress" 事件，并把进度传递给父组件
+            this.handleProgress(event)
           }
-        })
-        if (response.ok) {
-          const data = await response.json()
-          console.log(data)
-          this.handleSuccess(data)
-        } else {
-          this.handleError(response.statusText)
         }
+
+        // 监听 'load' 事件，当请求成功完成时调用
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const response = JSON.parse(xhr.responseText)
+            console.log(response)
+            this.handleSuccess(response)
+          } else {
+            this.handleError(xhr.statusText)
+          }
+        }
+
+        // 监听 'error' 事件，当请求失败时调用
+        xhr.onerror = () => {
+          this.handleError(xhr.statusText)
+        }
+
+        // 发送表单数据
+        xhr.send(formData)
       } catch (err) {
         this.handleError(err)
       }
