@@ -16,7 +16,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/internal/a/common"
+          action="https://api-internal.wefile.com/v1/internal/a/common"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :on-remove="handleRemove"
