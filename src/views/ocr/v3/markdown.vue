@@ -127,7 +127,7 @@ export default {
       console.log('upload file with token')
       const formData = new FormData()
       formData.append('file', uploadRequest.file)
-      formData.append('format', 'docx')
+      formData.append('format', 'markdown')
 
       try {
         // 创建 XMLHttpReadyState 对象
