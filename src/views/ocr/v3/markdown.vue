@@ -3,13 +3,10 @@
     <el-row style="text-align: center;">
       <section>
         <h2>
-          公式识别成 markdown
+          PDF转Markdown
         </h2>
         <div style="color:#787878">
-          <p>
-            将图片内的公式识别出来, 并且以mathml呈现
-          </p>
-          <p>适合试卷和论文的识别</p>
+          将图片、PDF转换为可编辑的Markdown文档
         </div>
         <br>
       </section>
@@ -19,7 +16,7 @@
           class="upload-demo"
           drag
           :disabled="disable"
-          action="https://api-internal.wefile.com/v1/wefile/math_markdown"
+          action="https://api-internal.wefile.com/v1/wefile/markdown_convert"
           :before-upload="beforeUpload"
           :on-progress="handleProgress"
           :http-request="uploadFileWithToken"
@@ -86,7 +83,7 @@ export default {
     handleSuccess(response, file, fileList) {
       this.isUploaded = true
       this.disable = true
-      this.fileUrl = response.exportDownloadList['MD']
+      this.fileUrl = response.exportDownloadList['MARKDOWN']
     },
     handleError(file, fileList) {
       this.uploadPercentage = 0
@@ -96,11 +93,6 @@ export default {
     handleRemove(file, fileList) {
       this.uploadPercentage = 0
       this.isUploaded = false
-    },
-    removeFileExtension(fileName) {
-      const lastDotIndex = fileName.lastIndexOf('.')
-      if (lastDotIndex === -1) return fileName // 如果没有点号，则返回原文件名
-      return fileName.substring(0, lastDotIndex)
     },
     saveAs(blob, filename) {
       if (window.navigator.msSaveOrOpenBlob) {
@@ -174,10 +166,15 @@ export default {
         this.handleError(err)
       }
     },
+    removeFileExtension(fileName) {
+      const lastDotIndex = fileName.lastIndexOf('.')
+      if (lastDotIndex === -1) return fileName // 如果没有点号，则返回原文件名
+      return fileName.substring(0, lastDotIndex)
+    },
     downloadFile() {
       this.getBlob(this.fileUrl).then(res => { // url:文件在oss上的地址
         var fileBaseName = this.removeFileExtension(this.fileName)
-        this.saveAs(res, fileBaseName + '.md') // filename:文件名，可自定义
+        this.saveAs(res, fileBaseName + '.zip') // filename:文件名，可自定义
       })
     }
   }
