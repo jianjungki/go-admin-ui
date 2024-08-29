@@ -86,7 +86,7 @@ export default {
     handleSuccess(response, file, fileList) {
       this.isUploaded = true
       this.disable = true
-      this.fileUrl = response.exportDownloadList['MD']
+      this.fileUrl = response.exportDownloadList['MARKDOWN']
     },
     handleError(file, fileList) {
       this.uploadPercentage = 0
