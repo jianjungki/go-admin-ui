@@ -135,7 +135,7 @@ export default {
       console.log('upload file with token')
       const formData = new FormData()
       formData.append('file', uploadRequest.file)
-      formData.append('format', 'markdown')
+      formData.append('exportList', 'markdown')
 
       try {
         // 创建 XMLHttpReadyState 对象
