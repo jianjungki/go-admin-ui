@@ -341,7 +341,7 @@ export default {
       // Prepare the form data
       const data = new FormData()
       data.append('languages', this.sizeForm.languageSelected)
-      data.append('exportList', this.sizeForm.formatSelected)
+      data.append('format', this.sizeForm.formatSelected)
       if (this.sizeForm.file) {
         data.append('file', this.sizeForm.file)
       }
